@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  
+
+    <link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
+
+    <meta name="apple-mobile-web-app-title" content="CodePen">
+
+    <link rel="icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+
+    <link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111" />
+
+
+
+  <meta charset="utf-8">
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+  <title>WebGL Fluid Simulation With Your Text</title>
+
+  <link rel="stylesheet" href="https://cpwebassets.codepen.io/assets/fullpage/fullpage-defe0b00ddddc98ad4bc2c428e9d6182cd7742e2624f558656dbfb986d4ba13c.css" />
+  
+
+    <link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
+
+    <meta name="apple-mobile-web-app-title" content="CodePen">
+
+    <link rel="icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+
+    <link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111" />
+
+
+
+
+
+  <title>WebGL Fluid Simulation With Your Text</title>
+
+  <style>
+    html { font-size: 15px; }
+    html, body { margin: 0; padding: 0; min-height: 100%; }
+    body { height:100%; display: flex; flex-direction: column; }
+    .referer-warning {
+      background: black;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      padding: 0.75em;
+      color: white;
+      text-align: center;
+      font-family: 'Lato', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma, system-ui, Sans-Serif;
+      line-height: 1.2;
+      font-size: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+    .referer-warning span { font-family: initial; }
+    .referer-warning h1 { font-size: 1.2rem; margin: 0; }
+    .referer-warning a { color: #56bcf9; }
+  </style>
+</head>
+
+<body class="">
+  <div class="referer-warning">
+    <h1><span>⚠️</span> Do not enter passwords or personal information on this page. <span>⚠️</span></h1>
+      This is a code demo posted by a web developer on <a href="https://codepen.io">CodePen</a>.
+    <br />
+    A referer from CodePen is required to render this page view, and your browser is not sending one (<a href="https://blog.codepen.io/2017/10/05/regarding-referer-headers/" target="_blank" rel="noreferrer noopener">more details</a>).</h1>
+  </div>
+
+  <div id="result-iframe-wrap" role="main">
+    <iframe
+      id="result"
+      srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot; >
+
+<head>
+  <meta charset=&quot;UTF-8&quot;>
+  
+
+    <link rel=&quot;apple-touch-icon&quot; type=&quot;image/png&quot; href=&quot;https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png&quot; />
+
+    <meta name=&quot;apple-mobile-web-app-title&quot; content=&quot;CodePen&quot;>
+
+    <link rel=&quot;icon&quot; type=&quot;image/x-icon&quot; href=&quot;https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico&quot; />
+
+    <link rel=&quot;mask-icon&quot; type=&quot;image/x-icon&quot; href=&quot;https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg&quot; color=&quot;#111&quot; />
+
+
+
+  
+    <script src=&quot;https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-f07739098a39bd4e74ddd974652dac904146f33fdc1ecab356e8c809a05faccb.js&quot;></script>
+
+
+  <title>WebGL Fluid Simulation With Your Text</title>
+
+    <link rel=&quot;canonical&quot; href=&quot;https://codepen.io/ksenia-k/pen/MWMObrY&quot;>
+  
+  
+  
+  
+<style>
+body, html {
+    padding: 0;
+    margin: 0;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.lil-gui {
+    --width: 450px;
+    max-width: 90%;
+    --widget-height: 20px;
+    font-size: 15px;
+    --input-font-size: 15px;
+    --padding: 10px;
+    --spacing: 10px;
+    --slider-knob-width: 5px;
+    --background-color: rgba(5, 0, 15, .8);
+    --widget-color: rgba(255, 255, 255, .3);
+    --focus-color: rgba(255, 255, 255, .4);
+    --hover-color: rgba(255, 255, 255, .5);
+
+    --font-family: monospace;
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+</head>
+
+<body translate=&quot;no&quot;>
+  <canvas></canvas>
+
+<script type=&quot;x-shader/x-fragment&quot; id=&quot;vertShader&quot;>
+    precision highp float;
+
+    varying vec2 vUv;
+    attribute vec2 a_position;
+
+    varying vec2 vL;
+    varying vec2 vR;
+    varying vec2 vT;
+    varying vec2 vB;
+    uniform vec2 u_texel;
+
+    void main () {
+        vUv = .5 * (a_position + 1.);
+        vL = vUv - vec2(u_texel.x, 0.);
+        vR = vUv + vec2(u_texel.x, 0.);
+        vT = vUv + vec2(0., u_texel.y);
+        vB = vUv - vec2(0., u_texel.y);
+        gl_Position = vec4(a_position, 0., 1.);
+    }
+</script>
+
+<script type=&quot;x-shader/x-fragment&quot; id=&quot;fragShaderAdvection&quot;>
+    precision highp float;
+    precision highp sampler2D;
+
+    varying vec2 vUv;
+    uniform sampler2D u_velocity_texture;
+    uniform sampler2D u_input_texture;
+    uniform vec2 u_texel;
+    uniform float u_dt;
+    uniform float u_use_text;
+    uniform sampler2D u_text_texture;
+
+    vec4 bilerp (sampler2D sam, vec2 uv, vec2 tsize) {
+        vec2 st = uv / tsize - 0.5;
+
+        vec2 iuv = floor(st);
+        vec2 fuv = fract(st);
+
+        vec4 a = texture2D(sam, (iuv + vec2(0.5, 0.5)) * tsize);
+        vec4 b = texture2D(sam, (iuv + vec2(1.5, 0.5)) * tsize);
+        vec4 c = texture2D(sam, (iuv + vec2(0.5, 1.5)) * tsize);
+        vec4 d = texture2D(sam, (iuv + vec2(1.5, 1.5)) * tsize);
+
+        return mix(mix(a, b, fuv.x), mix(c, d, fuv.x), fuv.y);
+    }
+
+    void main () {
+        vec2 coord = vUv - u_dt * bilerp(u_velocity_texture, vUv, u_texel).xy * u_texel;
+        float text = texture2D(u_text_texture, vec2(vUv.x, 1. - vUv.y)).r;
+        float dissipation = (.96 + text * .04 * u_use_text);
+
+        gl_FragColor = dissipation * bilerp(u_input_texture, coord, u_texel);
+        gl_FragColor.a = 1.;
+    }
+</script>
+
+<script type=&quot;x-shader/x-fragment&quot; id=&quot;fragShaderDivergence&quot;>
+    precision highp float;
+    precision highp sampler2D;
+
+    varying highp vec2 vUv;
+    varying highp vec2 vL;
+    varying highp vec2 vR;
+    varying highp vec2 vT;
+    varying highp vec2 vB;
+    uniform sampler2D u_velocity_texture;
+
+    void main () {
+        float L = texture2D(u_velocity_texture, vL).x;
+        float R = texture2D(u_velocity_texture, vR).x;
+        float T = texture2D(u_velocity_texture, vT).y;
+        float B = texture2D(u_velocity_texture, vB).y;
+
+        float div = .6 * (R - L + T - B);
+        gl_FragColor = vec4(div, 0., 0., 1.);
+    }
+</script>
+
+<script type=&quot;x-shader/x-fragment&quot; id=&quot;fragShaderPressure&quot;>
+    precision highp float;
+    precision highp sampler2D;
+
+    varying highp vec2 vUv;
+    varying highp vec2 vL;
+    varying highp vec2 vR;
+    varying highp vec2 vT;
+    varying highp vec2 vB;
+    uniform sampler2D u_pressure_texture;
+    uniform sampler2D u_divergence_texture;
+    uniform sampler2D u_text_texture;
+
+    void main () {
+
+        float text = texture2D(u_text_texture, vec2(vUv.x, 1. - vUv.y)).r;
+
+        float L = texture2D(u_pressure_texture, vL).x;
+        float R = texture2D(u_pressure_texture, vR).x;
+        float T = texture2D(u_pressure_texture, vT).x;
+        float B = texture2D(u_pressure_texture, vB).x;
+        float C = texture2D(u_pressure_texture, vUv).x;
+        float divergence = texture2D(u_divergence_texture, vUv).x;
+
+        float pressure = (L + R + B + T - divergence) * 0.25;
+        pressure += (.2 * text);
+
+        gl_FragColor = vec4(pressure, 0., 0., 1.);
+    }
+</script>
+
+<script type=&quot;x-shader/x-fragment&quot; id=&quot;fragShaderGradientSubtract&quot;>
+    precision highp float;
+    precision highp sampler2D;
+
+    varying highp vec2 vUv;
+    varying highp vec2 vL;
+    varying highp vec2 vR;
+    varying highp vec2 vT;
+    varying highp vec2 vB;
+    uniform sampler2D u_pressure_texture;
+    uniform sampler2D u_velocity_texture;
+
+    uniform sampler2D u_text_texture;
+
+    void main () {
+        float L = texture2D(u_pressure_texture, vL).x;
+        float R = texture2D(u_pressure_texture, vR).x;
+        float T = texture2D(u_pressure_texture, vT).x;
+        float B = texture2D(u_pressure_texture, vB).x;
+        vec2 velocity = texture2D(u_velocity_texture, vUv).xy;
+        velocity.xy -= vec2(R - L, T - B);
+        gl_FragColor = vec4(velocity, 0., 1.);
+    }
+</script>
+
+<script type=&quot;x-shader/x-fragment&quot; id=&quot;fragShaderPoint&quot;>
+    precision highp float;
+    precision highp sampler2D;
+
+    varying vec2 vUv;
+    uniform sampler2D u_input_texture;
+    uniform float u_ratio;
+    uniform vec3 u_point_value;
+    uniform vec2 u_point;
+    uniform float u_point_size;
+
+    uniform sampler2D u_text_texture;
+
+
+    void main () {
+        vec2 p = vUv - u_point.xy;
+        p.x *= u_ratio;
+        vec3 splat = pow(2., -dot(p, p) / u_point_size) * u_point_value;
+
+        float text = texture2D(u_text_texture, vec2(vUv.x, 1. - vUv.y)).r;
+        splat *= (.7 + .2 * text);
+
+        vec3 base = texture2D(u_input_texture, vUv).xyz;
+        gl_FragColor = vec4(base + splat, 1.);
+    }
+</script>
+
+<script type=&quot;x-shader/x-fragment&quot; id=&quot;fragShaderOutputShader&quot;>
+    precision highp float;
+    precision highp sampler2D;
+
+    varying vec2 vUv;
+    uniform sampler2D u_output_texture;
+    uniform sampler2D u_text_texture;
+
+    void main () {
+        vec3 C = texture2D(u_output_texture, vUv).rgb;
+        float text = texture2D(u_text_texture, vec2(vUv.x, 1. - vUv.y)).r; 
+        gl_FragColor = vec4(vec3(1.) - C, 1.);
+    }
+</script>
+  
+    <script id=&quot;rendered-js&quot; type=&quot;module&quot;>
+import GUI from &quot;https://cdn.jsdelivr.net/npm/lil-gui@0.18.2/+esm&quot;;
+
+const canvasEl = document.querySelector(&quot;canvas&quot;);
+const textureEl = document.createElement(&quot;canvas&quot;);
+const textureCtx = textureEl.getContext(&quot;2d&quot;);
+
+const fontOptions = {
+  &quot;Arial&quot;: &quot;Arial, sans-serif&quot;,
+  &quot;Verdana&quot;: &quot;Verdana, sans-serif&quot;,
+  &quot;Tahoma&quot;: &quot;Tahoma, sans-serif&quot;,
+  &quot;Times New Roman&quot;: &quot;Times New Roman, serif&quot;,
+  &quot;Georgia&quot;: &quot;Georgia, serif&quot;,
+  &quot;Garamond&quot;: &quot;Garamond, serif&quot;,
+  &quot;Courier New&quot;: &quot;Courier New, monospace&quot;,
+  &quot;Brush Script MT&quot;: &quot;Brush Script MT, cursive&quot; };
+
+
+const params = {
+  fontName: &quot;Verdana&quot;,
+  isBold: false,
+  fontSize: 80,
+  text: &quot;fluid&quot;,
+  pointerSize: null,
+  color: { r: 1., g: .0, b: .5 } };
+
+
+const pointer = {
+  x: 0,
+  y: 0,
+  dx: 0,
+  dy: 0,
+  moved: false };
+
+
+
+let outputColor, velocity, divergence, pressure, canvasTexture;
+let isPreview = true;
+
+const gl = canvasEl.getContext(&quot;webgl&quot;);
+gl.getExtension(&quot;OES_texture_float&quot;);
+
+const vertexShader = createShader(
+document.getElementById(&quot;vertShader&quot;).innerHTML,
+gl.VERTEX_SHADER);
+
+const splatProgram = createProgram(&quot;fragShaderPoint&quot;);
+const divergenceProgram = createProgram(&quot;fragShaderDivergence&quot;);
+const pressureProgram = createProgram(&quot;fragShaderPressure&quot;);
+const gradientSubtractProgram = createProgram(&quot;fragShaderGradientSubtract&quot;);
+const advectionProgram = createProgram(&quot;fragShaderAdvection&quot;);
+const outputShaderProgram = createProgram(&quot;fragShaderOutputShader&quot;);
+
+gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+-1, -1,
+-1, 1,
+1, 1,
+1, -1]),
+gl.STATIC_DRAW);
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 0, 2, 3]), gl.STATIC_DRAW);
+gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(0);
+
+
+createTextCanvasTexture();
+initFBOs();
+createControls();
+setupEvents();
+resizeCanvas();
+window.addEventListener(&quot;resize&quot;, resizeCanvas);
+
+render();
+
+function createTextCanvasTexture() {
+  canvasTexture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, canvasTexture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+}
+
+function updateTextCanvas() {
+  textureCtx.fillStyle = &quot;black&quot;;
+  textureCtx.fillRect(0, 0, textureEl.width, textureEl.height);
+
+  textureCtx.font = (params.isBold ? &quot;bold&quot; : &quot;normal&quot;) + &quot; &quot; + params.fontSize * devicePixelRatio + &quot;px &quot; + fontOptions[params.fontName];
+  textureCtx.fillStyle = &quot;#ffffff&quot;;
+  textureCtx.textAlign = &quot;center&quot;;
+
+  textureCtx.filter = &quot;blur(3px)&quot;;
+
+  const textBox = textureCtx.measureText(params.text);
+  textureCtx.fillText(params.text, .5 * textureEl.width, .5 * textureEl.height + .5 * textBox.actualBoundingBoxAscent);
+
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, canvasTexture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureEl);
+}
+
+function createProgram(elId) {
+  const shader = createShader(
+  document.getElementById(elId).innerHTML,
+  gl.FRAGMENT_SHADER);
+  const program = createShaderProgram(vertexShader, shader);
+  const uniforms = getUniforms(program);
+  return {
+    program, uniforms };
+
+}
+
+function createShaderProgram(vertexShader, fragmentShader) {
+  const program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error(&quot;Unable to initialize the shader program: &quot; + gl.getProgramInfoLog(program));
+    return null;
+  }
+
+  return program;
+}
+
+function getUniforms(program) {
+  let uniforms = [];
+  let uniformCount = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+  for (let i = 0; i < uniformCount; i++) {
+    let uniformName = gl.getActiveUniform(program, i).name;
+    uniforms[uniformName] = gl.getUniformLocation(program, uniformName);
+  }
+  return uniforms;
+}
+
+function createShader(sourceCode, type) {
+  const shader = gl.createShader(type);
+  gl.shaderSource(shader, sourceCode);
+  gl.compileShader(shader);
+
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.error(&quot;An error occurred compiling the shaders: &quot; + gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
+    return null;
+  }
+
+  return shader;
+}
+
+function blit(target) {
+  if (target == null) {
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  } else {
+    gl.viewport(0, 0, target.width, target.height);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, target.fbo);
+  }
+  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+}
+
+function initFBOs() {
+  const fboSize = [
+  Math.floor(.5 * window.innerWidth),
+  Math.floor(.5 * window.innerHeight)];
+
+  outputColor = createDoubleFBO(fboSize[0], fboSize[1]);
+  velocity = createDoubleFBO(fboSize[0], fboSize[1], gl.RG);
+  divergence = createFBO(fboSize[0], fboSize[1], gl.RGB);
+  pressure = createDoubleFBO(fboSize[0], fboSize[1], gl.RGB);
+}
+
+
+function createFBO(w, h, type = gl.RGBA) {
+  gl.activeTexture(gl.TEXTURE0);
+
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, type, w, h, 0, type, gl.FLOAT, null);
+
+  const fbo = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+  gl.viewport(0, 0, w, h);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  return {
+    fbo,
+    width: w,
+    height: h,
+    attach(id) {
+      gl.activeTexture(gl.TEXTURE0 + id);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      return id;
+    } };
+
+}
+
+function createDoubleFBO(w, h, type) {
+  let fbo1 = createFBO(w, h, type);
+  let fbo2 = createFBO(w, h, type);
+
+  return {
+    width: w,
+    height: h,
+    texelSizeX: 1. / w,
+    texelSizeY: 1. / h,
+    read: () => {
+      return fbo1;
+    },
+    write: () => {
+      return fbo2;
+    },
+    swap() {
+      let temp = fbo1;
+      fbo1 = fbo2;
+      fbo2 = temp;
+    } };
+
+}
+
+function render(t) {
+
+  const dt = 1 / 60;
+
+  if (t &amp;&amp; isPreview) {
+    updateMousePosition(
+    (.5 - .45 * Math.sin(.003 * t - 2)) * window.innerWidth,
+    (.5 + .1 * Math.sin(.0025 * t) + .1 * Math.cos(.002 * t)) * window.innerHeight);
+
+  }
+
+  if (pointer.moved) {
+    if (!isPreview) {
+      pointer.moved = false;
+    }
+
+    gl.useProgram(splatProgram.program);
+    gl.uniform1i(splatProgram.uniforms.u_input_texture, velocity.read().attach(1));
+    gl.uniform1f(splatProgram.uniforms.u_ratio, canvasEl.width / canvasEl.height);
+    gl.uniform2f(splatProgram.uniforms.u_point, pointer.x / canvasEl.width, 1 - pointer.y / canvasEl.height);
+    gl.uniform3f(splatProgram.uniforms.u_point_value, pointer.dx, -pointer.dy, 1);
+    gl.uniform1f(splatProgram.uniforms.u_point_size, params.pointerSize);
+    blit(velocity.write());
+    velocity.swap();
+
+    gl.uniform1i(splatProgram.uniforms.u_input_texture, outputColor.read().attach(1));
+    gl.uniform3f(splatProgram.uniforms.u_point_value, 1. - params.color.r, 1. - params.color.g, 1. - params.color.b);
+    blit(outputColor.write());
+    outputColor.swap();
+  }
+
+  gl.useProgram(divergenceProgram.program);
+  gl.uniform2f(divergenceProgram.uniforms.u_texel, velocity.texelSizeX, velocity.texelSizeY);
+  gl.uniform1i(divergenceProgram.uniforms.u_velocity_texture, velocity.read().attach(1));
+  blit(divergence);
+
+  gl.useProgram(pressureProgram.program);
+  gl.uniform2f(pressureProgram.uniforms.u_texel, velocity.texelSizeX, velocity.texelSizeY);
+  gl.uniform1i(pressureProgram.uniforms.u_divergence_texture, divergence.attach(1));
+
+  for (let i = 0; i < 10; i++) {
+    gl.uniform1i(pressureProgram.uniforms.u_pressure_texture, pressure.read().attach(2));
+    blit(pressure.write());
+    pressure.swap();
+  }
+
+  gl.useProgram(gradientSubtractProgram.program);
+  gl.uniform2f(gradientSubtractProgram.uniforms.u_texel, velocity.texelSizeX, velocity.texelSizeY);
+  gl.uniform1i(gradientSubtractProgram.uniforms.u_pressure_texture, pressure.read().attach(1));
+  gl.uniform1i(gradientSubtractProgram.uniforms.u_velocity_texture, velocity.read().attach(2));
+  blit(velocity.write());
+  velocity.swap();
+
+  gl.useProgram(advectionProgram.program);
+  gl.uniform1f(advectionProgram.uniforms.u_use_text, 0);
+  gl.uniform2f(advectionProgram.uniforms.u_texel, velocity.texelSizeX, velocity.texelSizeY);
+  gl.uniform1i(advectionProgram.uniforms.u_velocity_texture, velocity.read().attach(1));
+  gl.uniform1i(advectionProgram.uniforms.u_input_texture, velocity.read().attach(1));
+  gl.uniform1f(advectionProgram.uniforms.u_dt, dt);
+  blit(velocity.write());
+  velocity.swap();
+
+  gl.useProgram(advectionProgram.program);
+  gl.uniform1f(advectionProgram.uniforms.u_use_text, 1);
+  gl.uniform2f(advectionProgram.uniforms.u_texel, outputColor.texelSizeX, outputColor.texelSizeY);
+  gl.uniform1i(advectionProgram.uniforms.u_input_texture, outputColor.read().attach(2));
+  blit(outputColor.write());
+  outputColor.swap();
+
+  gl.useProgram(outputShaderProgram.program);
+  gl.uniform1i(outputShaderProgram.uniforms.u_output_texture, outputColor.read().attach(1));
+
+  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+
+  requestAnimationFrame(render);
+}
+
+function resizeCanvas() {
+  params.pointerSize = 4 / window.innerHeight;
+  canvasEl.width = textureEl.width = window.innerWidth;
+  canvasEl.height = textureEl.height = window.innerHeight;
+  initFBOs();
+  updateTextCanvas();
+}
+
+function setupEvents() {
+  canvasEl.addEventListener(&quot;mousemove&quot;, e => {
+    isPreview = false;
+    updateMousePosition(e.pageX, e.pageY);
+  });
+
+  canvasEl.addEventListener(&quot;touchmove&quot;, e => {
+    e.preventDefault();
+    isPreview = false;
+    updateMousePosition(e.targetTouches[0].pageX, e.targetTouches[0].pageY);
+  });
+}
+
+function updateMousePosition(eX, eY) {
+  pointer.moved = true;
+  pointer.dx = 5 * (eX - pointer.x);
+  pointer.dy = 5 * (eY - pointer.y);
+  pointer.x = eX;
+  pointer.y = eY;
+}
+
+function createControls() {
+  const gui = new GUI();
+  gui.close();
+
+  gui.
+  add(params, &quot;text&quot;).
+  onChange(updateTextCanvas);
+  gui.
+  add(params, &quot;fontSize&quot;, 10, 300).
+  onChange(updateTextCanvas).
+  name(&quot;font size, px&quot;);
+  gui.
+  add(params, &quot;isBold&quot;).
+  onChange(updateTextCanvas).
+  name(&quot;bold&quot;);
+  gui.
+  add(params, &quot;fontName&quot;, Object.keys(fontOptions)).
+  onChange(updateTextCanvas).
+  name(&quot;font&quot;);
+  gui.
+  addColor(params, &quot;color&quot;);
+}
+//# sourceURL=pen.js
+  </script>
+
+  
+</body>
+
+</html>
+"
+      sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation" allow="accelerometer *; ambient-light-sensor *; camera *; display-capture *; encrypted-media *; geolocation *; gyroscope *; microphone *; midi *; payment *; serial *; vr *; web-share *; xr-spatial-tracking *" allowTransparency="true"
+      allowpaymentrequest="true" allowfullscreen="true" class="result-iframe">
+      </iframe>
+  </div>
+
+</body>
+
+</html>

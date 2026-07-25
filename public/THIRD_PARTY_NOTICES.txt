@@ -1,0 +1,6 @@
+Fluid Signature includes an adapted version of “WebGL Fluid Simulation With
+Your Text” by Ksenia Kondrashova (@ksenia-k), originally published on CodePen:
+https://codepen.io/ksenia-k/full/MWMObrY
+
+Upstream code is used under the MIT License according to CodePen’s default
+license for public Pens at the captured date. Copyright remains with the author.

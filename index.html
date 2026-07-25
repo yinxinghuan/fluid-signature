@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta name="game-uuid" content="e484c282-d5ac-49ec-b2e3-b55fbcef46aa" />
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#fff7fb" />
+    <title>Fluid Signature</title>
+    <script src="https://images.aiwaves.tech/alteru/guest-shell.js" defer></script>
+  </head>
+  <body>
+    <main class="fs-stage" aria-label="Fluid Signature interactive experience">
+      <canvas class="fs-canvas" aria-label="Drag through the fluid name"></canvas>
+      <header class="fs-title" aria-hidden="true">
+        <span>VISUAL STUDY / 03</span>
+        <h1>FLUID<br />SIGNATURE</h1>
+      </header>
+      <footer class="fs-identity">
+        <span></span>
+        <b>NAME IN MOTION</b>
+        <strong id="identityName">YINXINGHUAN</strong>
+      </footer>
+      <div class="fs-ghost" id="ghost" aria-hidden="true">
+        <i></i>
+        <svg viewBox="0 0 24 24">
+          <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.92-1.38z"/>
+        </svg>
+      </div>
+      <div class="fs-settled" id="settled" aria-live="polite">
+        <span id="settledTitle">签名已凝结</span>
+        <strong id="settledName">YINXINGHUAN</strong>
+      </div>
+      <section class="fs-error" id="error" hidden>
+        <strong id="errorTitle">墨迹没有出现</strong>
+        <span id="errorBody">请重新载入这张流体纸面</span>
+        <button id="retry" type="button">重新载入</button>
+      </section>
+    </main>
+    <script type="module" src="./src/upstream.js"></script>
+  </body>
+</html>

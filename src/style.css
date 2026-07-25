@@ -1,0 +1,33 @@
+:root { color:#140713; background:#fff8fb; font-family:Inter,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif; font-synthesis:none; --fs-top:max(22px,env(safe-area-inset-top)); --fs-bottom:max(24px,env(safe-area-inset-bottom)); }
+* { box-sizing:border-box; }
+html,body { width:100%; min-width:320px; height:100%; margin:0; overflow:hidden; background:#fff8fb; }
+button { font:inherit; }
+.fs-stage { position:relative; width:100%; height:100dvh; min-height:480px; overflow:hidden; isolation:isolate; background:#fff8fb; }
+.fs-stage::after { position:absolute; inset:0; z-index:1; pointer-events:none; content:""; background:linear-gradient(180deg,rgba(255,248,251,.9),transparent 25%,transparent 72%,rgba(255,248,251,.82)); }
+.fs-canvas { position:absolute; inset:0; z-index:0; width:100%; height:100%; touch-action:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+.fs-title { position:absolute; top:calc(var(--fs-top) + 62px); left:clamp(18px,5.8vw,46px); z-index:2; pointer-events:none; color:#180815; mix-blend-mode:multiply; }
+.fs-title span { display:block; margin:0 0 8px 2px; color:rgba(24,8,21,.56); font-size:9px; font-weight:700; letter-spacing:.21em; }
+.fs-title h1 { margin:0; font-family:Didot,"Bodoni 72","Times New Roman","Noto Serif SC",serif; font-size:clamp(48px,14.4vw,86px); font-weight:500; line-height:.78; letter-spacing:-.05em; }
+.fs-identity { position:absolute; right:clamp(18px,5.8vw,46px); bottom:calc(var(--fs-bottom) + 4px); left:clamp(18px,5.8vw,46px); z-index:2; display:grid; grid-template-columns:minmax(20px,1fr) auto minmax(0,min(42vw,250px)); align-items:center; gap:8px; color:rgba(24,8,21,.58); font-size:9px; font-weight:700; letter-spacing:.15em; pointer-events:none; }
+.fs-identity > span { height:1px; background:rgba(24,8,21,.38); }
+.fs-identity b { font-weight:700; white-space:nowrap; }
+.fs-identity strong { min-width:0; overflow:hidden; color:#180815; text-overflow:ellipsis; white-space:nowrap; }
+.fs-ghost { position:absolute; top:51%; left:21%; z-index:4; width:52px; height:54px; pointer-events:none; opacity:0; color:#180815; filter:drop-shadow(0 3px 8px rgba(255,255,255,.6)); }
+.fs-ghost svg { position:relative; z-index:2; width:46px; height:46px; fill:currentColor; }
+.fs-ghost i { position:absolute; top:9px; left:-8px; width:156px; height:2px; background:linear-gradient(90deg,transparent,#ff0080,transparent); opacity:0; transform-origin:left; }
+.fs-ghost--show { animation:fs-ghost-drag 1500ms cubic-bezier(.22,1,.36,1) both; }
+.fs-ghost--show i { animation:fs-ghost-trail 1200ms 160ms ease-out both; }
+.fs-settled { position:absolute; top:53%; left:50%; z-index:3; display:grid; gap:5px; width:min(82vw,340px); color:#180815; text-align:center; pointer-events:none; opacity:0; transform:translate(-50%,-42%); transition:opacity 320ms ease,transform 520ms cubic-bezier(.22,1,.36,1); }
+.fs-settled span { font-size:10px; font-weight:700; letter-spacing:.22em; }
+.fs-settled strong { overflow:hidden; font-family:Didot,"Bodoni 72","Noto Serif SC",serif; font-size:clamp(28px,9vw,48px); font-weight:500; text-overflow:ellipsis; white-space:nowrap; }
+.fs-settled--show { opacity:1; transform:translate(-50%,-50%); }
+.fs-error { position:absolute; top:50%; left:50%; z-index:8; display:grid; width:min(82vw,310px); color:#180815; text-align:center; transform:translate(-50%,-50%); }
+.fs-error[hidden] { display:none; }
+.fs-error strong { font-family:Didot,"Bodoni 72","Noto Serif SC",serif; font-size:28px; font-weight:500; }
+.fs-error span { margin-top:8px; color:rgba(24,8,21,.64); font-size:14px; }
+.fs-error button { min-width:132px; min-height:44px; margin:22px auto 0; padding:0 22px; border:1px solid rgba(24,8,21,.7); color:#180815; background:transparent; touch-action:manipulation; }
+.fs-baseline .fs-title,.fs-baseline .fs-identity,.fs-baseline .fs-ghost,.fs-baseline .fs-settled,.fs-baseline .fs-stage::after { display:none; }
+@keyframes fs-ghost-drag { 0%{opacity:0;transform:translate(0,10px) scale(1.05)} 18%{opacity:.88} 72%{opacity:.9;transform:translate(148px,-22px) scale(.96)} 100%{opacity:0;transform:translate(180px,-30px) scale(1.02)} }
+@keyframes fs-ghost-trail { 0%{opacity:0;transform:scaleX(.08)} 25%{opacity:.9} 100%{opacity:0;transform:scaleX(1)} }
+@media (max-height:650px) { .fs-title { top:calc(var(--fs-top) + 56px); } .fs-title h1 { font-size:clamp(40px,12.5vw,62px); } }
+@media (prefers-reduced-motion:reduce) { .fs-ghost { display:none; } .fs-settled { transition-duration:120ms; } }
