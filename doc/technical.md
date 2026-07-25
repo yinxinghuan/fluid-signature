@@ -20,7 +20,7 @@
 
 身份解析按 URL `user_name`、Aigram 当前用户资料接口
 `/note/telegram/user/get/info/by/telegram_id`、平台外 `AlterU` 顺序执行；平台内
-`user_name` 为必需字段，异步结果会更新
+`data.name` 为资料接口的必需字段，`data.user_name` 仅作旧数据兼容；异步结果会更新
 文字纹理。流体循环使用 velocity、divergence、pressure、outputColor 四组 FBO；
 每帧执行触点注入、散度、Jacobi 压力、梯度扣除和两次平流。产品模式将压力迭代
 从 10 降到 7 以降低信息流 GPU 压力，`?baseline=1` 保持原作 10 次。Pointer
