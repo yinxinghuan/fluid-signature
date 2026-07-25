@@ -28,8 +28,9 @@ async function resolveName() {
       'GET'
     );
     const profile = response?.data ?? null;
-    if (!profile?.user_name) throw new Error('AlterU profile did not return user_name');
-    return profile.user_name;
+    const name = profile?.name || profile?.user_name;
+    if (!name) throw new Error('AlterU profile did not return name');
+    return name;
   }
   return 'AlterU';
 }
