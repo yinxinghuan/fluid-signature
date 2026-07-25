@@ -23,18 +23,20 @@ async function resolveName() {
   const debugName = query.get('user_name');
   if (debugName) return debugName;
   if (isInAigram && telegramId) {
-    try {
-      const response = await callAigramAPI('AW.PROFILE.GET', { telegram_id: telegramId });
-      const profile = response?.data ?? response;
-      return profile?.user_name || profile?.username || profile?.name || 'yinxinghuan';
-    } catch (error) {
-      console.warn('Profile unavailable, using publisher fallback.', error);
-    }
+    const response = await callAigramAPI(
+      `/note/telegram/user/get/info/by/telegram_id?telegram_id=${encodeURIComponent(telegramId)}`,
+      'GET'
+    );
+    const profile = response?.data ?? null;
+    if (!profile?.user_name) throw new Error('AlterU profile did not return user_name');
+    return profile.user_name;
   }
-  return 'yinxinghuan';
+  return 'AlterU';
 }
 
-let identityName = baselineMode ? 'fluid' : (query.get('user_name') || 'yinxinghuan');
+let identityName = baselineMode
+  ? 'fluid'
+  : (query.get('user_name') || (isInAigram ? '' : 'AlterU'));
 document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
 document.body.classList.toggle('fs-baseline', baselineMode);
 document.querySelector('#identityName').textContent = identityName.toUpperCase();
@@ -128,6 +130,9 @@ resolveName().then(nextName => {
   document.querySelector('#identityName').textContent = nextName.toUpperCase();
   document.querySelector('#settledName').textContent = nextName.toUpperCase();
   updateTextCanvas();
+}).catch(error => {
+  console.error(error);
+  document.querySelector('#error').hidden = false;
 });
 if (!baselineMode && !reducedMotion) {
   window.setTimeout(() => {
